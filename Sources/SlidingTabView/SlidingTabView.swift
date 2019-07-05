@@ -25,7 +25,7 @@
 import SwiftUI
 
 @available(iOS 13.0, *)
-struct SlidingTabView : View {
+public struct SlidingTabView : View {
     
     // MARK: Internal State
     
@@ -42,45 +42,45 @@ struct SlidingTabView : View {
     @Binding var selection: Int
     
     /// The title of the tabs
-    let tabs: [String]
+    public let tabs: [String]
     
     // Mark: View Customization Properties
     
     /// The font of the tab title
-    var font: Font = .body
+    public var font: Font = .body
     
     /// The selection bar sliding animation type
-    var animation: Animation = .spring(damping: 12)
+    public var animation: Animation = .spring(damping: 12)
     
     /// The accent color when the tab is selected
-    var activeAccentColor: Color = Color.blue
+    public var activeAccentColor: Color = Color.blue
     
     /// The accent color when the tab is not selected
-    var inactiveAccentColor: Color = Color.black.opacity(0.4)
+    public var inactiveAccentColor: Color = Color.black.opacity(0.4)
     
     /// The color of the selection bar
-    var selectionBarColor: Color = Color.blue
+    public var selectionBarColor: Color = Color.blue
     
     /// The tab color when the tab is not selected
-    var inactiveTabColor: Color = Color.clear
+    public var inactiveTabColor: Color = Color.clear
     
     /// The tab color when the tab is  selected
-    var activeTabColor: Color = Color.clear
+    public var activeTabColor: Color = Color.clear
     
     /// The height of the selection bar
-    var selectionBarHeight: Length = 2
+    public var selectionBarHeight: Length = 2
     
     /// The selection bar background color
-    var selectionBarBackgroundColor = Color.gray.opacity(0.2)
+    public var selectionBarBackgroundColor = Color.gray.opacity(0.2)
     
     /// The height of the selection bar background
-    var selectionBarBackgroundHeight: Length = 1
+    public var selectionBarBackgroundHeight: Length = 1
     
     
     
     // MARK: View Construction
     
-    var body: some View {
+    public var body: some View {
         assert(tabs.count > 1, "Must have at least 2 tabs")
         
         return VStack(alignment: .leading, spacing: 0) {
