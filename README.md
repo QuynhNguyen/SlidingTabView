@@ -1,6 +1,6 @@
 
 <p align="center">
-<img src="https://i.imgur.com/jQBLzkg.gif" width="890 />
+<img src="https://i.imgur.com/jQBLzkg.gif" />
 </p>
 
 **SlidingTabView** is a simple Android-Like tab view that is built using the latest and greatest SwiftUI. Almost everything is customizable!
