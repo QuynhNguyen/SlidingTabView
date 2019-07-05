@@ -39,7 +39,7 @@ public struct SlidingTabView : View {
     // MARK: Required Properties
     
     /// Binding the selection index which will  re-render the consuming view
-    @Binding var selection: Int
+    @Binding public var selection: Int
     
     /// The title of the tabs
     public let tabs: [String]
