@@ -39,44 +39,70 @@ public struct SlidingTabView : View {
     // MARK: Required Properties
     
     /// Binding the selection index which will  re-render the consuming view
-    @Binding public var selection: Int
+    @Binding var selection: Int
     
     /// The title of the tabs
-    public let tabs: [String]
+    let tabs: [String]
     
     // Mark: View Customization Properties
     
     /// The font of the tab title
-    public var font: Font = .body
+    let font: Font
     
     /// The selection bar sliding animation type
-    public var animation: Animation = .spring(damping: 12)
+    let animation: Animation
     
     /// The accent color when the tab is selected
-    public var activeAccentColor: Color = Color.blue
+    let activeAccentColor: Color
     
     /// The accent color when the tab is not selected
-    public var inactiveAccentColor: Color = Color.black.opacity(0.4)
+    let inactiveAccentColor: Color
     
     /// The color of the selection bar
-    public var selectionBarColor: Color = Color.blue
+    let selectionBarColor: Color
     
     /// The tab color when the tab is not selected
-    public var inactiveTabColor: Color = Color.clear
+    let inactiveTabColor: Color
     
     /// The tab color when the tab is  selected
-    public var activeTabColor: Color = Color.clear
+    let activeTabColor: Color
     
     /// The height of the selection bar
-    public var selectionBarHeight: Length = 2
+    let selectionBarHeight: Length
     
     /// The selection bar background color
-    public var selectionBarBackgroundColor = Color.gray.opacity(0.2)
+    let selectionBarBackgroundColor: Color
     
     /// The height of the selection bar background
-    public var selectionBarBackgroundHeight: Length = 1
+    let selectionBarBackgroundHeight: Length
     
+    // MARK: init
     
+    public init(selection: Binding<Int>,
+                tabs: [String],
+                font: Font = .body,
+                animation: Animation = .spring(damping: 12),
+                activeAccentColor: Color = .blue,
+                inactiveAccentColor: Color = Color.black.opacity(0.4),
+                selectionBarColor: Color = .blue,
+                inactiveTabColor: Color = .clear,
+                activeTabColor: Color = .clear,
+                selectionBarHeight: Length = 2,
+                selectionBarBackgroundColor: Color = Color.gray.opacity(0.2),
+                selectionBarBackgroundHeight: Length = 1) {
+        self.$selection = selection
+        self.tabs = tabs
+        self.font = font
+        self.animation = animation
+        self.activeAccentColor = activeAccentColor
+        self.inactiveAccentColor = inactiveAccentColor
+        self.selectionBarColor = selectionBarColor
+        self.inactiveTabColor = inactiveTabColor
+        self.activeTabColor = activeTabColor
+        self.selectionBarHeight = selectionBarHeight
+        self.selectionBarBackgroundColor = selectionBarBackgroundColor
+        self.selectionBarBackgroundHeight = selectionBarBackgroundHeight
+    }
     
     // MARK: View Construction
     
