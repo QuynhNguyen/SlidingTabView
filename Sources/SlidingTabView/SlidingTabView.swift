@@ -90,7 +90,7 @@ public struct SlidingTabView : View {
                 selectionBarHeight: Length = 2,
                 selectionBarBackgroundColor: Color = Color.gray.opacity(0.2),
                 selectionBarBackgroundHeight: Length = 1) {
-        self.$selection = selection
+        self._selection = selection
         self.tabs = tabs
         self.font = font
         self.animation = animation
