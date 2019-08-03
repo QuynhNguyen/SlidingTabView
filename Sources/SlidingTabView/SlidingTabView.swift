@@ -68,28 +68,28 @@ public struct SlidingTabView : View {
     let activeTabColor: Color
     
     /// The height of the selection bar
-    let selectionBarHeight: Length
+    let selectionBarHeight: CGFloat
     
     /// The selection bar background color
     let selectionBarBackgroundColor: Color
     
     /// The height of the selection bar background
-    let selectionBarBackgroundHeight: Length
+    let selectionBarBackgroundHeight: CGFloat
     
     // MARK: init
     
     public init(selection: Binding<Int>,
                 tabs: [String],
                 font: Font = .body,
-                animation: Animation = .spring(damping: 12),
+                animation: Animation = .spring(),
                 activeAccentColor: Color = .blue,
                 inactiveAccentColor: Color = Color.black.opacity(0.4),
                 selectionBarColor: Color = .blue,
                 inactiveTabColor: Color = .clear,
                 activeTabColor: Color = .clear,
-                selectionBarHeight: Length = 2,
+                selectionBarHeight: CGFloat = 2,
                 selectionBarBackgroundColor: Color = Color.gray.opacity(0.2),
-                selectionBarBackgroundHeight: Length = 1) {
+                selectionBarBackgroundHeight: CGFloat = 1) {
         self._selection = selection
         self.tabs = tabs
         self.font = font
@@ -111,7 +111,7 @@ public struct SlidingTabView : View {
         
         return VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 0) {
-                ForEach(self.tabs.identified(by: \.self)) { tab in
+                ForEach(self.tabs, id:\.self) { tab in
                     Button(action: {
                         let selection = self.tabs.firstIndex(of: tab) ?? 0
                         self.selectionState = selection
