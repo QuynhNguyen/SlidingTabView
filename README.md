@@ -12,8 +12,15 @@ Please use Swift Package Manager to install **SlidingTabView**
 Just instantiate and bind it to your state. That is it!
 ```swift
 @State private var selectedTabIndex = 0
-SlidingTabView(selection: $selectedTabIndex,tabs: ["First Tab", "Second Tab"]
+SlidingTabView(selection: $selectedTabIndex,tabs: ["First Tab", "Second Tab"])
 ```
+
+If need disabled button tabs:
+```swift
+@State private var selectedTabIndex = 0
+SlidingTabView(selection: $selectedTabIndex,tabs: ["First Tab", "Second Tab"], isEnabled: false)
+```
+
 
 ## Canvas Preview
 ```swift

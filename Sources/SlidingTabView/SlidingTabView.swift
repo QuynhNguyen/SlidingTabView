@@ -76,9 +76,12 @@ public struct SlidingTabView : View {
     /// The height of the selection bar background
     let selectionBarBackgroundHeight: CGFloat
     
+    // Enabled / Disabled buttons
+    let isEnabled:Bool
+    
     // MARK: init
     
-    public init(selection: Binding<Int>,
+    public init(selection: Binding<Int> = .constant(0),
                 tabs: [String],
                 font: Font = .body,
                 animation: Animation = .spring(),
@@ -89,7 +92,9 @@ public struct SlidingTabView : View {
                 activeTabColor: Color = .clear,
                 selectionBarHeight: CGFloat = 2,
                 selectionBarBackgroundColor: Color = Color.gray.opacity(0.2),
-                selectionBarBackgroundHeight: CGFloat = 1) {
+                selectionBarBackgroundHeight: CGFloat = 1,
+                isEnabled:Bool = true
+        ) {
         self._selection = selection
         self.tabs = tabs
         self.font = font
@@ -102,6 +107,7 @@ public struct SlidingTabView : View {
         self.selectionBarHeight = selectionBarHeight
         self.selectionBarBackgroundColor = selectionBarBackgroundColor
         self.selectionBarBackgroundHeight = selectionBarBackgroundHeight
+        self.isEnabled = isEnabled
     }
     
     // MARK: View Construction
@@ -112,14 +118,17 @@ public struct SlidingTabView : View {
         return VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 0) {
                 ForEach(self.tabs, id:\.self) { tab in
-                    Button(action: {
-                        let selection = self.tabs.firstIndex(of: tab) ?? 0
-                        self.selectionState = selection
-                    }) {
-                        HStack {
-                            Spacer()
-                            Text(tab).font(self.font)
-                            Spacer()
+                    Group{
+                        if self.isEnabled{
+                            Button(action: {
+                                let selection = self.tabs.firstIndex(of: tab) ?? 0
+                                self.selectionState = selection
+                                
+                            }) {
+                                self.getViewTab(tab:tab)
+                            }
+                        }else{
+                            self.getViewTab(tab:tab)
                         }
                     }
                     .padding(.vertical, 16)
@@ -161,6 +170,16 @@ public struct SlidingTabView : View {
     
     private func tabWidth(from totalWidth: CGFloat) -> CGFloat {
         return totalWidth / CGFloat(tabs.count)
+    }
+    
+    private func getViewTab(tab:String) -> AnyView{
+        return AnyView(
+            HStack {
+                Spacer()
+                Text(tab).font(self.font)
+                Spacer()
+            }
+        )
     }
 }
 
