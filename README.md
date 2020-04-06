@@ -21,6 +21,18 @@ If need disabled button tabs:
 SlidingTabView(selection: $selectedTabIndex,tabs: ["First Tab", "Second Tab"], isEnabled: false)
 ```
 
+If need change manually a tab:
+```swift
+@State private var selectedTabIndex = 0
+SlidingTabView(
+    selectionState:self.$selectedTabIndex,
+    selection: $selectedTabIndex,
+    tabs: ["First Tab", "Second Tab"], isEnabled: false
+)
+```
+
+To change the tab, change the value of selectionState and selection
+
 
 ## Canvas Preview
 ```swift
