@@ -9,32 +9,28 @@
 Please use Swift Package Manager to install **SlidingTabView**
 
 ## Usage
-Just instantiate and bind it to your state. That is it!
+Just instantiate, bind it to your state and add your tabs with their respective content. That is it!
 ```swift
-@State private var selectedTabIndex = 0
-SlidingTabView(selection: $selectedTabIndex,tabs: ["First Tab", "Second Tab"]
-```
+import SlidingTabView
 
-## Canvas Preview
-```swift
-struct SlidingTabConsumerView : View {
-    @State private var selectedTabIndex = 0
+struct MyView: View {
+
+    @State var selectedTab: Int = 0
 
     var body: some View {
-        VStack(alignment: .leading) {
-            SlidingTabView(selection: self.$selectedTabIndex, tabs: ["First", "Second"])
-            (selectedTabIndex == 0 ? Text("First View") : Text("Second View")).padding()
-            Spacer()
-        }
-            .padding(.top, 50)
-            .animation(.none)
-    }
-}
+        SlidingTabView(
+            selection: $selectedTab,
+            tabs: SlidingTab(title: "Hello") {
 
-@available(iOS 13.0.0, *)
-struct SlidingTabView_Previews : PreviewProvider {
-    static var previews: some View {
-        SlidingTabConsumerView()
+                Text("Hello")
+
+            },
+            SlidingTab(title: "World!") {
+
+                Text("World!")
+
+            }
+        )
     }
 }
 ```
