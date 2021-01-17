@@ -24,7 +24,6 @@
 
 import SwiftUI
 
-@available(iOS 13.0, *)
 public struct SlidingTabView : View {
     
     // MARK: Internal State
@@ -41,8 +40,8 @@ public struct SlidingTabView : View {
     /// Binding the selection index which will  re-render the consuming view
     @Binding var selection: Int
     
-    /// The title of the tabs
-    let tabs: [String]
+    /// The list of tabs
+    let tabs: [SlidingTab]
     
     // Mark: View Customization Properties
     
@@ -57,6 +56,9 @@ public struct SlidingTabView : View {
     
     /// The accent color when the tab is not selected
     let inactiveAccentColor: Color
+    
+    /// The height of the tabs.
+    let tabHeight: CGFloat
     
     /// The color of the selection bar
     let selectionBarColor: Color
@@ -79,11 +81,12 @@ public struct SlidingTabView : View {
     // MARK: init
     
     public init(selection: Binding<Int>,
-                tabs: [String],
+                tabs: SlidingTab...,
                 font: Font = .body,
                 animation: Animation = .spring(),
                 activeAccentColor: Color = .blue,
                 inactiveAccentColor: Color = Color.black.opacity(0.4),
+                tabHeight: CGFloat = 50,
                 selectionBarColor: Color = .blue,
                 inactiveTabColor: Color = .clear,
                 activeTabColor: Color = .clear,
@@ -96,6 +99,7 @@ public struct SlidingTabView : View {
         self.animation = animation
         self.activeAccentColor = activeAccentColor
         self.inactiveAccentColor = inactiveAccentColor
+        self.tabHeight = tabHeight
         self.selectionBarColor = selectionBarColor
         self.inactiveTabColor = inactiveTabColor
         self.activeTabColor = activeTabColor
@@ -109,50 +113,65 @@ public struct SlidingTabView : View {
     public var body: some View {
         assert(tabs.count > 1, "Must have at least 2 tabs")
         
-        return VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 0) {
-                ForEach(self.tabs, id:\.self) { tab in
-                    Button(action: {
-                        let selection = self.tabs.firstIndex(of: tab) ?? 0
-                        self.selectionState = selection
-                    }) {
-                        HStack {
-                            Spacer()
-                            Text(tab).font(self.font)
-                            Spacer()
+        return ZStack {
+            
+            VStack(alignment: .leading, spacing: 0) {
+                
+                Group {
+                    HStack(spacing: 0) {
+                        
+                        ForEach(0..<self.tabs.count) { (index) in
+                            
+                            let tab = tabs[index]
+                            
+                            Button(action: {
+                                
+                                self.selectionState = index
+                                
+                            }) {
+                                HStack {
+                                    Spacer()
+                                    Text(tab.title).font(self.font)
+                                    Spacer()
+                                }
+                            }
+                            .frame(height: self.tabHeight)
+                            .foregroundColor(
+                                self.isSelected(tabIndex: index)
+                                    ? self.activeAccentColor
+                                    : self.inactiveAccentColor)
+                            .background(
+                                self.isSelected(tabIndex: index)
+                                    ? self.activeTabColor
+                                    : self.inactiveTabColor)
                         }
                     }
-                    .padding(.vertical, 16)
-                        .accentColor(
-                            self.isSelected(tabIdentifier: tab)
-                                ? self.activeAccentColor
-                                : self.inactiveAccentColor)
-                        .background(
-                            self.isSelected(tabIdentifier: tab)
-                                ? self.activeTabColor
-                                : self.inactiveTabColor)
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            Rectangle()
+                                .fill(self.selectionBarColor)
+                                .frame(width: self.tabWidth(from: geometry.size.width), height: self.selectionBarHeight, alignment: .leading)
+                                .offset(x: self.selectionBarXOffset(from: geometry.size.width), y: 0)
+                                .animation(self.animation)
+                            Rectangle()
+                                .fill(self.selectionBarBackgroundColor)
+                                .frame(width: geometry.size.width, height: self.selectionBarBackgroundHeight, alignment: .leading)
+                        }.fixedSize(horizontal: false, vertical: true)
+                    }.fixedSize(horizontal: false, vertical: true)
+                    Spacer()
                 }
             }
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(self.selectionBarColor)
-                        .frame(width: self.tabWidth(from: geometry.size.width), height: self.selectionBarHeight, alignment: .leading)
-                        .offset(x: self.selectionBarXOffset(from: geometry.size.width), y: 0)
-                        .animation(self.animation)
-                    Rectangle()
-                        .fill(self.selectionBarBackgroundColor)
-                        .frame(width: geometry.size.width, height: self.selectionBarBackgroundHeight, alignment: .leading)
-                }.fixedSize(horizontal: false, vertical: true)
-            }.fixedSize(horizontal: false, vertical: true)
+            
+            let tab = tabs[selectionState]
+            tab.content().offset(y: self.tabHeight + self.selectionBarHeight)
             
         }
     }
     
     // MARK: Private Helper
     
-    private func isSelected(tabIdentifier: String) -> Bool {
-        return tabs[selectionState] == tabIdentifier
+    private func isSelected(tabIndex: Int) -> Bool {
+        return selectionState == tabIndex
     }
     
     private func selectionBarXOffset(from totalWidth: CGFloat) -> CGFloat {
@@ -165,30 +184,27 @@ public struct SlidingTabView : View {
 }
 
 #if DEBUG
-
-@available(iOS 13.0, *)
-struct SlidingTabConsumerView : View {
-    @State private var selectedTabIndex = 0
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            SlidingTabView(selection: self.$selectedTabIndex,
-                           tabs: ["First", "Second"],
-                           font: .body,
-                           activeAccentColor: Color.blue,
-                           selectionBarColor: Color.blue)
-            (selectedTabIndex == 0 ? Text("First View") : Text("Second View")).padding()
-            Spacer()
-        }
-        .padding(.top, 50)
-            .animation(.none)
-    }
-}
-
-@available(iOS 13.0.0, *)
 struct SlidingTabView_Previews : PreviewProvider {
+    
+    @State static var selectedTab = 0
+    
     static var previews: some View {
-        SlidingTabConsumerView()
+        SlidingTabView(
+            selection: $selectedTab,
+            tabs: SlidingTab(title: "Hello") {
+                
+                Text("Hello")
+                
+            },
+            SlidingTab(title: "World!") {
+                
+                Text("World!")
+                
+            },
+            font: .body,
+            activeAccentColor: Color.blue,
+            selectionBarColor: Color.blue
+        )
     }
 }
 #endif
