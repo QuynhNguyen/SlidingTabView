@@ -30,7 +30,7 @@ public struct SlidingTabView : View {
     // MARK: Internal State
     
     /// Internal state to keep track of the selection index
-    @State private var selectionState: Int = 0 {
+    @State private var selectionState: Int {
         didSet {
             selection = selectionState
         }
@@ -90,6 +90,8 @@ public struct SlidingTabView : View {
                 selectionBarHeight: CGFloat = 2,
                 selectionBarBackgroundColor: Color = Color.gray.opacity(0.2),
                 selectionBarBackgroundHeight: CGFloat = 1) {
+        
+        selectionState = selection.wrappedValue
         self._selection = selection
         self.tabs = tabs
         self.font = font
