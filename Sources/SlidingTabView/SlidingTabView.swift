@@ -25,7 +25,7 @@
 import SwiftUI
 
 @available(iOS 13.0, *)
-public struct SlidingTabView1 : View {
+public struct SlidingTabView : View {
     
     // MARK: Internal State
     
@@ -173,7 +173,7 @@ struct SlidingTabConsumerView : View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            SlidingTabView1(selection: self.$selectedTabIndex,
+            SlidingTabView(selection: self.$selectedTabIndex,
                             tabs: ["First", "Second"],
                             font: .body,
                             activeAccentColor: Color.blue,
