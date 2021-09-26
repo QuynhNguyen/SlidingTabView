@@ -90,6 +90,7 @@ public struct SlidingTabView : View {
                 selectionBarHeight: CGFloat = 2,
                 selectionBarBackgroundColor: Color = Color.gray.opacity(0.2),
                 selectionBarBackgroundHeight: CGFloat = 1) {
+        self.selectionState = selection.wrappedValue
         self._selection = selection
         self.tabs = tabs
         self.font = font
@@ -123,14 +124,14 @@ public struct SlidingTabView : View {
                         }
                     }
                     .padding(.vertical, 16)
-                        .accentColor(
-                            self.isSelected(tabIdentifier: tab)
-                                ? self.activeAccentColor
-                                : self.inactiveAccentColor)
-                        .background(
-                            self.isSelected(tabIdentifier: tab)
-                                ? self.activeTabColor
-                                : self.inactiveTabColor)
+                    .accentColor(
+                        self.isSelected(tabIdentifier: tab)
+                            ? self.activeAccentColor
+                            : self.inactiveAccentColor)
+                    .background(
+                        self.isSelected(tabIdentifier: tab)
+                            ? self.activeTabColor
+                            : self.inactiveTabColor)
                 }
             }
             GeometryReader { geometry in
@@ -168,20 +169,20 @@ public struct SlidingTabView : View {
 
 @available(iOS 13.0, *)
 struct SlidingTabConsumerView : View {
-    @State private var selectedTabIndex = 0
+    @State private var selectedTabIndex = 1
     
     var body: some View {
         VStack(alignment: .leading) {
             SlidingTabView(selection: self.$selectedTabIndex,
-                           tabs: ["First", "Second"],
-                           font: .body,
-                           activeAccentColor: Color.blue,
-                           selectionBarColor: Color.blue)
+                            tabs: ["First", "Second"],
+                            font: .body,
+                            activeAccentColor: Color.blue,
+                            selectionBarColor: Color.blue)
             (selectedTabIndex == 0 ? Text("First View") : Text("Second View")).padding()
             Spacer()
         }
         .padding(.top, 50)
-            .animation(.none)
+        .animation(.none)
     }
 }
 
