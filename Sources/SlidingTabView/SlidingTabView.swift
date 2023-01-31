@@ -23,10 +23,11 @@
 //
 
 import SwiftUI
+import ViewExtractor
 
-@available(iOS 13.0, *)
-public struct SlidingTabView : View {
-    
+@available(iOS 14.0, *)
+public struct SlidingTabView<Content:View>: View{
+
     // MARK: Required Properties
     
     /// Binding the selection index which will  re-render the consuming view
@@ -35,7 +36,9 @@ public struct SlidingTabView : View {
     /// The title of the tabs
     let tabs: [String]
     
-    // Mark: View Customization Properties
+    let content: () -> Content
+
+    // MARK: View Customization Properties
     
     /// The font of the tab title
     let font: Font
@@ -80,7 +83,8 @@ public struct SlidingTabView : View {
                 activeTabColor: Color = .clear,
                 selectionBarHeight: CGFloat = 2,
                 selectionBarBackgroundColor: Color = Color.gray.opacity(0.2),
-                selectionBarBackgroundHeight: CGFloat = 1) {
+                selectionBarBackgroundHeight: CGFloat = 1,
+                @ViewBuilder content: @escaping () -> Content) {
         self._selection = selection
         self.tabs = tabs
         self.font = font
@@ -93,34 +97,36 @@ public struct SlidingTabView : View {
         self.selectionBarHeight = selectionBarHeight
         self.selectionBarBackgroundColor = selectionBarBackgroundColor
         self.selectionBarBackgroundHeight = selectionBarBackgroundHeight
+        self.content = content
     }
     
     // MARK: View Construction
     
-    public var body: some View {
-        assert(tabs.count > 1, "Must have at least 2 tabs")
-        
-        return VStack(alignment: .leading, spacing: 0) {
+    private var tabsView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            
             HStack(spacing: 0) {
                 ForEach(self.tabs, id:\.self) { tab in
-                    Button(action: {
-                        self.selection = self.tabs.firstIndex(of: tab)!
-                    }) {
+                    Button{
+                        withAnimation(self.animation) {
+                            self.selection =  self.tabs.firstIndex(of: tab)!
+                        }
+                    } label: {
                         HStack {
                             Spacer()
                             Text(tab).font(self.font)
                             Spacer()
                         }
                     }
-                    .padding(.vertical, 16)
-                        .accentColor(
-                            self.isSelected(tabIdentifier: tab)
-                                ? self.activeAccentColor
-                                : self.inactiveAccentColor)
-                        .background(
-                            self.isSelected(tabIdentifier: tab)
-                                ? self.activeTabColor
-                                : self.inactiveTabColor)
+                    .frame(height: 52)
+                    .accentColor(
+                        self.isSelected(tabIdentifier: tab)
+                        ? self.activeAccentColor
+                        : self.inactiveAccentColor)
+                    .background(
+                        self.isSelected(tabIdentifier: tab)
+                        ? self.activeTabColor
+                        : self.inactiveTabColor)
                 }
             }
             GeometryReader { geometry in
@@ -129,13 +135,31 @@ public struct SlidingTabView : View {
                         .fill(self.selectionBarColor)
                         .frame(width: self.tabWidth(from: geometry.size.width), height: self.selectionBarHeight, alignment: .leading)
                         .offset(x: self.selectionBarXOffset(from: geometry.size.width), y: 0)
-                        .animation(self.animation)
+                    
                     Rectangle()
                         .fill(self.selectionBarBackgroundColor)
                         .frame(width: geometry.size.width, height: self.selectionBarBackgroundHeight, alignment: .leading)
                 }.fixedSize(horizontal: false, vertical: true)
             }.fixedSize(horizontal: false, vertical: true)
             
+        }
+    }
+    
+    public var body: some View {
+        assert(tabs.count > 1, "Must have at least 2 tabs")
+        
+        return VStack(alignment: .leading) {
+            tabsView
+            Extract(content) { views in
+                TabView(selection: $selection.animation(self.animation)) {
+                    ForEach(Array(zip(views.indices, views)), id: \.1.id) {index, view in
+                        view.tag(index)
+                    }
+                }
+                .tabViewStyle(.page)
+                .indexViewStyle(.page(backgroundDisplayMode: .never))
+            
+            }
         }
     }
     
@@ -156,26 +180,23 @@ public struct SlidingTabView : View {
 
 #if DEBUG
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct SlidingTabConsumerView : View {
     @State private var selectedTabIndex = 0
     
     var body: some View {
-        VStack(alignment: .leading) {
-            SlidingTabView(selection: self.$selectedTabIndex,
-                           tabs: ["First", "Second"],
-                           font: .body,
-                           activeAccentColor: Color.blue,
-                           selectionBarColor: Color.blue)
-            (selectedTabIndex == 0 ? Text("First View") : Text("Second View")).padding()
-            Spacer()
+        SlidingTabView(selection: self.$selectedTabIndex,
+                       tabs: ["First", "Second"],
+                       font: .body,
+                       activeAccentColor: Color.blue,
+                       selectionBarColor: Color.blue) {
+            Text("First View")
+            Text("Second View")
         }
-        .padding(.top, 50)
-            .animation(.none)
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct SlidingTabView_Previews : PreviewProvider {
     static var previews: some View {
         SlidingTabConsumerView()
