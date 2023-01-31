@@ -27,15 +27,6 @@ import SwiftUI
 @available(iOS 13.0, *)
 public struct SlidingTabView : View {
     
-    // MARK: Internal State
-    
-    /// Internal state to keep track of the selection index
-    @State private var selectionState: Int = 0 {
-        didSet {
-            selection = selectionState
-        }
-    }
-    
     // MARK: Required Properties
     
     /// Binding the selection index which will  re-render the consuming view
@@ -113,8 +104,7 @@ public struct SlidingTabView : View {
             HStack(spacing: 0) {
                 ForEach(self.tabs, id:\.self) { tab in
                     Button(action: {
-                        let selection = self.tabs.firstIndex(of: tab) ?? 0
-                        self.selectionState = selection
+                        self.selection = self.tabs.firstIndex(of: tab)!
                     }) {
                         HStack {
                             Spacer()
@@ -152,11 +142,11 @@ public struct SlidingTabView : View {
     // MARK: Private Helper
     
     private func isSelected(tabIdentifier: String) -> Bool {
-        return tabs[selectionState] == tabIdentifier
+        return tabs[selection] == tabIdentifier
     }
     
     private func selectionBarXOffset(from totalWidth: CGFloat) -> CGFloat {
-        return self.tabWidth(from: totalWidth) * CGFloat(selectionState)
+        return self.tabWidth(from: totalWidth) * CGFloat(selection)
     }
     
     private func tabWidth(from totalWidth: CGFloat) -> CGFloat {
